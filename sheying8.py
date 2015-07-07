@@ -29,7 +29,7 @@ def get_sheying8_url(**kwargs):
     for i in xrange(2060):
         print i
         r = s.get('http://www.sheying8.com/photolist/human/' + str(i + 1) + '.html')
-        soup = BeautifulSoup(r.content)
+        soup = BeautifulSoup(r.content, 'lxml')
         for item in soup.find_all('div', class_='padder-v'):
             try:
                 url = 'http://www.sheying8.com' + item.find('a', class_='text-ellipsis')['href'] + '\n'
@@ -65,7 +65,7 @@ def craw_image(**kwargs):
             os.makedirs(path)
         print filename
         r = s.get(url)
-        soup = BeautifulSoup(r.content)
+        soup = BeautifulSoup(r.content, 'lxml')
         item = soup.find('div', class_='photos-content')
         if item:
             for i, img in enumerate(item.find_all('img', class_='img-thumbnail')):
