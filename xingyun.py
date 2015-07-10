@@ -12,6 +12,7 @@ from bs4 import BeautifulSoup
 import sys
 import datetime
 import ConfigParser
+import time
 
 session = None
 header = None
@@ -168,6 +169,7 @@ def get_user_info(url, path='.', rank=-1, **kwargs):
     for i, img_url in enumerate(img_url_list):
         with open(path + '/' + str(i) + '.jpg', 'wb') as fw:
             fw.write(session.get(img_url).content)
+            time.sleep(1)
 
 
 def get_img_url(r, **kwargs):
