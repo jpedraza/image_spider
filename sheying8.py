@@ -2,15 +2,9 @@
 __author__ = 'lufo'
 
 import os
-import re
-import time
-import json
-import platform
 import requests
-import html2text
 from bs4 import BeautifulSoup
-import sys
-import datetime
+from multiprocessing.dummy import Pool as ThreadPool
 
 session = None
 
@@ -42,21 +36,16 @@ def get_sheying8_url(**kwargs):
             fw.write(url)
 
 
-def craw_image(**kwargs):
+def craw_image(url_list):
     """
     将sheying8中所有图片保存下来，每个文件夹保存一个人的图片
-    :param kwargs:
+    :param url_list: 要抓取的url列表
     :return:
     """
     global session
     if session == None:
         session = requests.session()
     s = session
-    url_list = []
-    filename = 'sheying8.txt'
-    with open(filename) as fr:
-        for url in fr:
-            url_list.append(url.strip())
     for url in url_list:
         filename = url[len('http://www.sheying8.com/uploadfile/user/'):len(
             'http://www.sheying8.com/uploadfile/user/2013-11/174263') - 1]
@@ -88,9 +77,31 @@ def save_image(img_url, path, **kwargs):
         fw.write(s.get(img_url).content)
 
 
+def craw_image_parallel(url_list, step, number_of_threads, begin=0):
+    """
+    并行抓取图片
+    :param url_list: 要抓取的用户url list
+    :param step: 每个线程每次抓取多少用户
+    :param number_of_threads: 线程数
+    :param begin: 从url_list第几个开始
+    :return:
+    """
+    func = lambda x: craw_image(url_list[x:x + step])
+    pool = ThreadPool(number_of_threads)
+    for i in xrange(begin, len(url_list), step * number_of_threads):
+        pool.map(func, xrange(i, i + step * number_of_threads, step))
+    pool.close()
+    pool.join()
+
+
 def main():
     # get_sheying8_url()
-    craw_image()
+    url_list = []
+    filename = 'sheying8.txt'
+    with open(filename) as fr:
+        for url in fr:
+            url_list.append(url.strip())
+    craw_image_parallel(url_list, 100, 8)
 
 
 if __name__ == '__main__':
