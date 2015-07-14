@@ -3,6 +3,7 @@ __author__ = 'lufo'
 
 import os
 import requests
+import time
 from bs4 import BeautifulSoup
 from multiprocessing.dummy import Pool as ThreadPool
 
@@ -59,7 +60,11 @@ def craw_image(url_list):
         if item:
             for i, img in enumerate(item.find_all('img', class_='img-thumbnail')):
                 img_url = 'http://www.sheying8.com' + img['src']
-                save_image(img_url, path + '/' + str(i) + '.jpg')
+                try:
+                    save_image(img_url, path + '/' + str(i) + '.jpg')
+                except:
+                    print 'ERROR'
+                time.sleep(0.01)
 
 
 def save_image(img_url, path, **kwargs):
