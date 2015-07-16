@@ -23,7 +23,10 @@ def get_sheying8_url(**kwargs):
     url_list = []
     for i in xrange(2060):
         print i
-        r = s.get('http://www.sheying8.com/photolist/human/' + str(i + 1) + '.html')
+        try:
+            r = s.get('http://www.sheying8.com/photolist/human/' + str(i + 1) + '.html', timeout=1)
+        except Exception, e:
+            print e
         soup = BeautifulSoup(r.content, 'lxml')
         for item in soup.find_all('div', class_='padder-v'):
             try:
@@ -54,16 +57,16 @@ def craw_image(url_list):
         if not os.path.exists(path):
             os.makedirs(path)
         print filename
-        r = s.get(url)
+        try:
+            r = s.get(url, timeout=1)
+        except Exception, e:
+            print e
         soup = BeautifulSoup(r.content, 'lxml')
         item = soup.find('div', class_='photos-content')
         if item:
             for i, img in enumerate(item.find_all('img', class_='img-thumbnail')):
                 img_url = 'http://www.sheying8.com' + img['src']
-                try:
-                    save_image(img_url, path + '/' + str(i) + '.jpg')
-                except:
-                    print 'ERROR'
+                save_image(img_url, path + '/' + str(i) + '.jpg')
                 time.sleep(0.01)
 
 
@@ -79,7 +82,10 @@ def save_image(img_url, path, **kwargs):
         session = requests.session()
     s = session
     with open(path, 'wb') as fw:
-        fw.write(s.get(img_url).content)
+        try:
+            fw.write(s.get(img_url, timeout=1).content)
+        except Exception, e:
+            print e
 
 
 def craw_image_parallel(url_list, step, number_of_threads, begin=0):
@@ -106,7 +112,7 @@ def main():
     with open(filename) as fr:
         for url in fr:
             url_list.append(url.strip())
-    craw_image_parallel(url_list, 100, 8)
+    craw_image_parallel(url_list, 100, 4)
 
 
 if __name__ == '__main__':
