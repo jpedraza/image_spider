@@ -24,7 +24,7 @@ def get_sheying8_url(**kwargs):
     for i in xrange(2060):
         print i
         try:
-            r = s.get('http://www.sheying8.com/photolist/human/' + str(i + 1) + '.html', timeout=1)
+            r = s.get('http://www.sheying8.com/photolist/human/' + str(i + 1) + '.html', timeout=5)
         except Exception, e:
             print e
         soup = BeautifulSoup(r.content, 'lxml')
@@ -58,7 +58,7 @@ def craw_image(url_list):
             os.makedirs(path)
         print filename
         try:
-            r = s.get(url, timeout=1)
+            r = s.get(url, timeout=5)
         except Exception, e:
             print e
         soup = BeautifulSoup(r.content, 'lxml')
@@ -83,7 +83,7 @@ def save_image(img_url, path, **kwargs):
     s = session
     with open(path, 'wb') as fw:
         try:
-            fw.write(s.get(img_url, timeout=1).content)
+            fw.write(s.get(img_url, timeout=5).content)
         except Exception, e:
             print e
 
@@ -112,7 +112,7 @@ def main():
     with open(filename) as fr:
         for url in fr:
             url_list.append(url.strip())
-    craw_image_parallel(url_list, 100, 4)
+    craw_image_parallel(url_list, 100, 4, 10000)
 
 
 if __name__ == '__main__':
