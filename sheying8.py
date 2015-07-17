@@ -25,15 +25,15 @@ def get_sheying8_url(**kwargs):
         print i
         try:
             r = s.get('http://www.sheying8.com/photolist/human/' + str(i + 1) + '.html', timeout=5)
+            soup = BeautifulSoup(r.content, 'lxml')
+            for item in soup.find_all('div', class_='padder-v'):
+                try:
+                    url = 'http://www.sheying8.com' + item.find('a', class_='text-ellipsis')['href'] + '\n'
+                    url_list.append(url)
+                except Exception, e:
+                    print e
         except Exception, e:
             print e
-        soup = BeautifulSoup(r.content, 'lxml')
-        for item in soup.find_all('div', class_='padder-v'):
-            try:
-                url = 'http://www.sheying8.com' + item.find('a', class_='text-ellipsis')['href'] + '\n'
-                url_list.append(url)
-            except:
-                print 'url is None'
     filename = 'sheying8.txt'
     with open(filename, 'w') as fw:
         for url in url_list:
@@ -59,15 +59,15 @@ def craw_image(url_list):
         print filename
         try:
             r = s.get(url, timeout=5)
+            soup = BeautifulSoup(r.content, 'lxml')
+            item = soup.find('div', class_='photos-content')
+            if item:
+                for i, img in enumerate(item.find_all('img', class_='img-thumbnail')):
+                    img_url = 'http://www.sheying8.com' + img['src']
+                    save_image(img_url, path + '/' + str(i) + '.jpg')
+                    time.sleep(0.01)
         except Exception, e:
             print e
-        soup = BeautifulSoup(r.content, 'lxml')
-        item = soup.find('div', class_='photos-content')
-        if item:
-            for i, img in enumerate(item.find_all('img', class_='img-thumbnail')):
-                img_url = 'http://www.sheying8.com' + img['src']
-                save_image(img_url, path + '/' + str(i) + '.jpg')
-                time.sleep(0.01)
 
 
 def save_image(img_url, path, **kwargs):
@@ -112,7 +112,7 @@ def main():
     with open(filename) as fr:
         for url in fr:
             url_list.append(url.strip())
-    craw_image_parallel(url_list, 100, 4, 10000)
+    craw_image_parallel(url_list, 100, 4, 18000)
 
 
 if __name__ == '__main__':
