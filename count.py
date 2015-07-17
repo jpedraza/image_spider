@@ -9,6 +9,8 @@ def get_file_num(path):
     for i, dir_info in enumerate(os.walk(path)):
         if len(dir_info[0].split('/')) > 3:  # dir_info第一个元素为根目录的信息
             file_num.append(len(dir_info[2]))
+            if len(dir_info[2]) > 15:
+                print dir_info[0]
     return file_num
 
 

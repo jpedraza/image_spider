@@ -51,8 +51,8 @@ def craw_image(url_list):
         session = requests.session()
     s = session
     for url in url_list:
-        filename = url[len('http://www.sheying8.com/uploadfile/user/'):len(
-            'http://www.sheying8.com/uploadfile/user/2013-11/174263') - 1]
+        print 'url', url
+        filename = url[len('http://www.sheying8.com/uploadfile/user/'):len(url) - len('.html')]
         path = './sheying8/' + filename
         if not os.path.exists(path):
             os.makedirs(path)
