@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+    <title>The Page You Requested Was Not Found :: University of Hawaii System</title>
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <meta name="Author" content="University of Hawaii System" />
+    <meta name="Description" content="University of Hawaii System" />
+    <meta name="Keywords" content="Univeristy of Hawaii,System" />
+    <link rel="shortcut icon" href="http://www.hawaii.edu/favicon.ico" />
+    <link rel="stylesheet" href="/site/styles/2007/global.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="/site/styles/2007/header.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="/site/styles/2007/footer.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="/site/styles/2007/portal.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="/site/styles/2007/layout.css" type="text/css" media="all" />
+    <style type="text/css">
+	#msg {
+	    position: absolute;
+	    top: 300px;	
+	    left: 670px;
+	    width: 250px;
+	    background-color: #e3d5b4; 
+	    border: 1px dashed #000;
+	    padding: 10px;
+	}
+	    
+	.mytable {
+	    border: 2px solid #ccc;
+	    background-color: #e3d5b4;
+	    padding: 10px;
+	    margin: 10px;
+	}
+    </style>
+</head>
+<body>
+<ul id="config">
+    <li id="text-version"><a href="?pv=text">Text Version</a></li>
+    <li id="diacritics"><a href="/site/info/diacritics.php">Hawaiian language online</a></li>
+</ul>
+<div id="header">    
+    <div id="header-title"><a href="http://www.hawaii.edu/"><span>University of Hawaii System</span></a></div>
+    <div id="header-search">
+	<div id="search-box">
+	    <a href="/dir/">Directory</a> 
+	    &#183; <a href="/calendar/">Calendar</a>
+
+	    <form method="get" action="/search/index.php">
+		<input type="hidden" name="cx" value="008945998903415758105:4nrwh9-26ni" />
+		<input type="hidden" name="cof" value="FORID:11" />
+		<input id="q" type="text" name="q" size="17" maxlength="255" value="SEARCH" onclick="if (this.value=='SEARCH') this.value='';" onblur="if (this.value=='') this.value='SEARCH';" />
+		<input id="btn_search" name="submit" type="image" alt="go!" src="/site/images/navbar/btn_search.gif" />
+	    </form>
+	</div> <!-- search-box -->
+    </div> <!-- header-search -->
+
+    <ul id="nav1">
+	<li class="first"><a href="/prospective/">Prospective Students</a></li>
+	<li><a href="/students/">Current Students</a></li>
+	<li><a href="http://www.alumniconnections.com/hawaii/">Alumni &amp; Friends</a></li>
+	<li><a href="/faculty/">Faculty &amp; Staff</a></li>
+	<li class="last"><a href="/news/">News Media</a></li>
+    </ul>
+
+    <ul id="nav2">
+	<li class="first"><a href="/">Home</a></li>
+	<li><a href="/about/">About</a></li>
+	<li><a href="/campuses/">Campuses</a></li>
+	<li><a href="/admissions/" class="selected">Admissions</a></li>
+	<li><a href="/academics/">Academics</a></li>
+	<li><a href="/research/">Research</a></li>
+	<li><a href="/technology/">Technology</a></li>
+	<li><a href="/libraries/">Libraries</a></li>
+	<li class="last"><a href="/arts/">Arts &amp; Community</a></li>
+    </ul>
+</div> <!-- header -->
+<div id="page-main">
+    <h1>The Page You Requested Was Not Found</h1>
+
+    <p>Things to try:</p>
+    <ul>
+	<li>If you typed in the location (Web address or URL) of this page into your Web browser, please check the address and try it again.</li>
+	<li>Enter one or two keywords into the search box at the top of this page to find related items.</li>
+    </ul>
+
+    <p>If you are on this page as a result of clicking on a link on a University of Hawaii website, please report this error using the following form:</p>
+
+		
+		<!--   SUBMIT PAGE NOT FOUND REPORT  -->
+		<form name="notfound" method="POST" action="/messages/notfound.php">
+			<table width=60% class="mytable"> 
+				<tr><td colspan="2">
+&nbsp;&nbsp;</td></tr>
+				<tr>
+					<td align=right>
+
+ This page:&nbsp; <font color=red>*</font></td>
+					<td><input type="text" name="this" value="/kauhale/blog/images/alan_hale.jpg" size="60"></td>
+				</tr>
+				<tr><td colspan="2"> &nbsp;&nbsp; </td></tr>
+				<tr>
+					<td align=right> Previous page:&nbsp;<font color=red>*</font> </td>
+					<td><input type="text" name="prev" value="http://www.xingyun.cn/" size="60"></td>
+				</tr>
+				<tr><td colspan="2"> &nbsp;&nbsp; </td></tr>
+				<tr>
+					<td align=right> Your email:&nbsp;<font color=red>*</font> </td>
+					<td><input type="text" name="email" value="" size="40"></td>
+				</tr>
+				<tr><td colspan="2"> &nbsp;&nbsp; </td></tr>
+				<tr>
+					<td valign="top" align=right> Problem Description:&nbsp;&nbsp; </td>
+					<td><textarea name="comment" cols="55" rows="10"> </textarea></td>
+					</tr>
+				<tr><td colspan="2" align=center> <input type="submit" name="submit" value="Send this report"></td></tr>
+				<tr><td colspan="2"> &nbsp;&nbsp; </td></tr>
+				</table>
+		</form>
+
+			</div>
+<div id="footer">
+    <div id="footer-container">
+	<div id="footer-top">
+	    <h3>Quick links to campus homepages:</h3>
+	    <ul>
+		<li><a href="http://manoa.hawaii.edu/">Manoa</a></li>
+		<li><a href="http://hilo.hawaii.edu/">Hilo</a></li>
+
+		<li><a href="http://westoahu.hawaii.edu/">West Oahu</a></li>
+		<li><a href="http://hawaii.hawaii.edu/">Hawaii</a></li>
+		<li><a href="http://honolulu.hawaii.edu/">Honolulu</a></li>
+		<li><a href="http://kapiolani.hawaii.edu/">Kapiolani</a></li>
+		<li><a href="http://kauai.hawaii.edu/">Kauai</a> </li>
+		<li><a href="http://www.lcc.hawaii.edu/">Leeward</a> </li>
+
+		<li><a href="http://maui.hawaii.edu/">Maui</a> </li>
+		<li class="last"><a href="http://windward.hawaii.edu/">Windward</a></li>
+	    </ul>
+	</div> <!-- footer-top -->
+	<div id="footer-left">
+	    Use of this site implies consent with our <a href="/site/policy/disclaimer.html">Usage Policy</a>
+
+	    <br />The University of Hawaii is an <a href="/offices/eeo/policies.php?policy=antidisc">equal opportunity/affirmative action institution</a>.
+	    <br /><br />copyright &copy;2007University of Hawaii
+	</div> <!-- footer-left -->
+	<div id="footer-right">
+	    <a href="/site/contact/">Contact Us</a>
+	    <br /><br />This page last modified on August 28, 2007
+	</div> <!-- footer-right -->
+
+    </div> <!-- footer-container -->
+</div> <!-- footer -->
+</body>
+</html>
+
+
+

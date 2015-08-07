@@ -4,9 +4,17 @@ __author__ = 'lufo'
 import requests  # Get from https://github.com/kennethreitz/requests
 import string
 import os
+import time
 from multiprocessing.dummy import Pool as ThreadPool
 
 KEY = "kGHwFzi2I1zI8dA8GiRRHtGsrW8qqUgLXLKUatCUpn8"
+
+header = {
+    'User-Agent': "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.130 Safari/537.36",
+    'Host': "www.xingyun.cn",
+    'Referer': "http://www.xingyun.cn/",
+    'X-Requested-With': "XMLHttpRequest"
+}
 
 
 class BingSearchAPI():
@@ -88,12 +96,15 @@ def save_img(img_url_list, path):
     :param img_url: 图片url list
     :param path: 保存的路径
     """
+    global header
     for i, img_url in enumerate(img_url_list):
         with open(path + str(i) + '.jpg', 'wb') as fw:
             try:
-                fw.write(requests.get(img_url, timeout=5).content)
+                fw.write(requests.get(img_url, timeout=5, headers=header, allow_redirects=False).content)
             except Exception, e:
+                print img_url
                 print e
+            time.sleep(0.1)
 
 
 def save_all_img(file_list):
@@ -139,10 +150,9 @@ def save_img_main(step=25, number_of_threads=4, begin=0):
     end = len(file_list)
     pool = ThreadPool(number_of_threads)
     for i in xrange(begin, end, step * number_of_threads):
-        pool.map(save_all_img, [file_list[begin + j * step:begin + (j + 1) * step] for j in xrange(number_of_threads)])
+        pool.map(save_all_img, [file_list[i + j * step:i + (j + 1) * step] for j in xrange(number_of_threads)])
     pool.close()
     pool.join()
-
 
 
 def get_file_num(path='./europe_orig_sorted/'):
@@ -156,5 +166,5 @@ def get_file_num(path='./europe_orig_sorted/'):
 
 if __name__ == "__main__":
     # save_img_url_main()
-    save_img_main()
+    save_img_main(number_of_threads=4)
     # get_file_num()

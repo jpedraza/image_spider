@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>NoSuchBucket</Code><Message>The specified bucket does not exist</Message><BucketName>www.xingyun.cn</BucketName><RequestId>2F21DC2E4B43278E</RequestId><HostId>g5NkEimmPovX2blqVPyOEmM6oEkfdF5N8GF9iWbhrj6CQN89qpGOaohOf+8GJl/QByau82QqsjI=</HostId></Error>

@@ -1,0 +1,14 @@
+<html>
+<head><title>404 Not Found</title></head>
+<body>
+<h1>404 Not Found</h1>
+<ul>
+<li>Code: NoSuchBucket</li>
+<li>Message: The specified bucket does not exist</li>
+<li>BucketName: www.xingyun.cn</li>
+<li>RequestId: 2F76279B92BF9C6E</li>
+<li>HostId: Oob+odHn8qw2XsP7KUhVnorqKoXmjYzzUn3XpG43TsYlXQpskfmEb82fDV6Tdt17wLYbTMFuTRA=</li>
+</ul>
+<hr/>
+</body>
+</html>
