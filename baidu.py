@@ -10,6 +10,7 @@ import random
 import os
 import sys
 import chardet
+from multiprocessing.dummy import Pool as ThreadPool
 
 
 def uniqify(seq, idfun=None):
@@ -27,44 +28,36 @@ def uniqify(seq, idfun=None):
     return result
 
 
-def save_img_url(keyword, number_of_img=2000, path='./names/'):
-    pn = 2000 / 60 + 1
-    url_list = []
-    for i in xrange(pn):
-        search_url = 'http://image.baidu.com/i?tn=baiduimagejson&ie=utf-8&width=&height=&word=%s&rn=60&pn=%s' % (
-            keyword, str(i * 60))  # word为关键字，rn为显示的数量，pn为从第几张开始显示
-
-        # print search_url
-        try:
-            resp = urllib2.urlopen(search_url)
-            # print chardet.detect(resp.read())
-            # print resp.read().decode('gb2312', errors='ignore')
-            resp_js = json.loads(resp.read().decode('gb2312', errors='ignore'))
-            if resp_js['data']:
-                # print len(resp_js['data'])
-                for x in resp_js['data'][:-1]:
-                    try:
-                        # print x['objURL']
-                        url_list.append(x['objURL'])
-                    except Exception, e:
-                        print e
-        except Exception, e:
-            print e
-    if not os.path.isdir(path):
-        os.mkdir(path)
-    with open(path + keyword + '.txt', 'w') as fw:
-        for url in set(url_list):
-            fw.write(url + '\n')
-
-
-def save_all_img_url(begin=0):
-    keyword_list = []
-    with open('names.txt') as fr:
-        for keyword in fr:
-            keyword_list.append(keyword.strip())
-    for keyword in keyword_list[begin:]:
+def save_img_url(keyword_list, number_of_img=2000, path='./names/'):
+    for keyword in keyword_list:
         print keyword
-        save_img_url(keyword)
+        pn = number_of_img / 60 + 1
+        url_list = []
+        for i in xrange(pn):
+            search_url = 'http://image.baidu.com/i?tn=baiduimagejson&ie=utf-8&width=&height=&word=%s&rn=60&pn=%s' % (
+                keyword, str(i * 60))  # word为关键字，rn为显示的数量，pn为从第几张开始显示
+
+            # print search_url
+            try:
+                resp = urllib2.urlopen(search_url)
+                # print chardet.detect(resp.read())
+                # print resp.read().decode('gb2312', errors='ignore')
+                resp_js = json.loads(resp.read().decode('gb2312', errors='ignore'))
+                if resp_js['data']:
+                    # print len(resp_js['data'])
+                    for x in resp_js['data'][:-1]:
+                        try:
+                            # print x['objURL']
+                            url_list.append(x['objURL'])
+                        except Exception, e:
+                            print e
+            except Exception, e:
+                print e
+        if not os.path.isdir(path):
+            os.mkdir(path)
+        with open(path + keyword + '.txt', 'w') as fw:
+            for url in set(url_list):
+                fw.write(url + '\n')
 
 
 def save_img(img_url_list, path):
@@ -93,6 +86,19 @@ def save_all_img(begin=0):
         save_img(img_url_list, path)
 
 
+def save_img_url_main(step=100, number_of_threads=4, begin=800):
+    keyword_list = []
+    with open('names.txt') as fr:
+        for keyword in fr:
+            keyword_list.append(keyword.strip())
+    end = len(keyword_list)
+    pool = ThreadPool(number_of_threads)
+    for i in xrange(begin, end, step * number_of_threads):
+        pool.map(save_img_url, [keyword_list[i + j * step:i + (j + 1) * step] for j in xrange(number_of_threads)])
+    pool.close()
+    pool.join()
+
+
 if __name__ == '__main__':
-    save_all_img_url()
+    save_img_url_main()
     # save_all_img()
