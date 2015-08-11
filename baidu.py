@@ -18,17 +18,20 @@ def save_img_url(keyword, number_of_img=2000, path='./names/'):
     for i in xrange(pn):
         search_url = 'http://image.baidu.com/i?tn=baiduimagejson&width=&height=&word=%s&rn=60&pn=%s' % (keyword, str(i))
         # print search_url
-        resp = urllib2.urlopen(search_url)
-        # print chardet.detect(resp.read())
-        # print resp.read().decode('gb2312', errors='ignore')
-        resp_js = json.loads(resp.read().decode('gb2312', errors='ignore'))
-        if resp_js['data']:
-            # print len(resp_js['data'])
-            for x in resp_js['data'][:-1]:
-                try:
-                    url_list.append(x['objURL'])
-                except Exception, e:
-                    print e
+        try:
+            resp = urllib2.urlopen(search_url)
+            # print chardet.detect(resp.read())
+            # print resp.read().decode('gb2312', errors='ignore')
+            resp_js = json.loads(resp.read().decode('gb2312', errors='ignore'))
+            if resp_js['data']:
+                # print len(resp_js['data'])
+                for x in resp_js['data'][:-1]:
+                    try:
+                        url_list.append(x['objURL'])
+                    except Exception, e:
+                        print e
+        except Exception, e:
+            print e
     if not os.path.isdir(path):
         os.mkdir(path)
     with open(path + keyword + '.txt', 'w') as fw:
