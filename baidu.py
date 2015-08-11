@@ -12,12 +12,27 @@ import sys
 import chardet
 
 
+def uniqify(seq, idfun=None):
+    # list 去重
+    # order preserving
+    if idfun is None:
+        def idfun(x): return x
+    seen = {}
+    result = []
+    for item in seq:
+        marker = idfun(item)
+        if seen.has_key(marker): continue
+        seen[marker] = 1
+        result.append(item)
+    return result
+
+
 def save_img_url(keyword, number_of_img=2000, path='./names/'):
     pn = 2000 / 60 + 1
     url_list = []
     for i in xrange(pn):
         search_url = 'http://image.baidu.com/i?tn=baiduimagejson&ie=utf-8&width=&height=&word=%s&rn=60&pn=%s' % (
-        keyword, str(i * 60)) # word为关键字，rn为显示的数量，pn为从第几张开始显示
+            keyword, str(i * 60))  # word为关键字，rn为显示的数量，pn为从第几张开始显示
 
         # print search_url
         try:
