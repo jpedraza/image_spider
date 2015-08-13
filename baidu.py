@@ -2,9 +2,6 @@
 __author__ = 'lufo'
 
 import requests
-import base64
-import urllib2
-import urllib
 import json
 import random
 import os
@@ -39,15 +36,13 @@ def save_img_url(keyword_list, number_of_img=2000, path='./names/'):
 
             # print search_url
             try:
-                resp = urllib2.urlopen(search_url)
+                resp = requests.get(search_url, timeout=5, allow_redirects=False).content
                 # print chardet.detect(resp.read())
-                # print resp.read().decode('gb2312', errors='ignore')
-                resp_js = json.loads(resp.read().decode('gb2312', errors='ignore'))
+                resp_js = json.loads(resp.decode('gb2312', errors='ignore'))
                 if resp_js['data']:
                     # print len(resp_js['data'])
                     for x in resp_js['data'][:-1]:
                         try:
-                            # print x['objURL']
                             url_list.append(x['objURL'])
                         except Exception, e:
                             print e
@@ -56,7 +51,7 @@ def save_img_url(keyword_list, number_of_img=2000, path='./names/'):
         if not os.path.isdir(path):
             os.mkdir(path)
         with open(path + keyword + '.txt', 'w') as fw:
-            for url in set(url_list):
+            for url in uniqify(url_list):
                 fw.write(url + '\n')
 
 
@@ -100,5 +95,5 @@ def save_img_url_main(step=100, number_of_threads=4, begin=800):
 
 
 if __name__ == '__main__':
-    save_img_url_main()
+    save_img_url_main(number_of_threads=1, begin=0)
     # save_all_img()
