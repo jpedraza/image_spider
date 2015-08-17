@@ -7,7 +7,23 @@ import random
 import os
 import sys
 import chardet
+import subprocess
 from multiprocessing.dummy import Pool as ThreadPool
+
+
+def face_detection(img_path):
+    """
+    传入图片路径，判断图片中有没有人脸，使用YOLO
+    :return: 有返回True，没有返回False
+    """
+    path = '/Users/lufo/Downloads/darknet/'
+    os.chdir(path)
+    a = subprocess.check_output('./darknet detection test ./yolo_test_1.cfg ./yolo_test_1_39000.weights a.png',
+                                shell=True)
+    if 'aeroplane' in a:
+        return True
+    else:
+        return False
 
 
 def uniqify(seq, idfun=None):
@@ -57,7 +73,9 @@ def save_img_url(keyword_list, number_of_img=2000, path='./names/'):
 
 def save_img(img_url_list, path):
     for i, img_url in enumerate(img_url_list):
-        with open(path + str(i) + '.jpg', 'wb') as fw:
+        img_path = path + str(i) + '.jpg'
+        print img_path
+        with open(img_path, 'wb') as fw:
             try:
                 fw.write(requests.get(img_url, timeout=5, allow_redirects=False).content)
             except Exception, e:
@@ -65,13 +83,14 @@ def save_img(img_url_list, path):
                 print e
 
 
-def save_all_img(begin=0):
+def save_all_img(begin=0, end=200000):
     file_list = []
     with open('names.txt') as fr:
         for keyword in fr:
             file_list.append((keyword.strip() + '.txt'))
-    for file in file_list[begin:]:
+    for file in file_list[begin:end]:
         img_url_list = []
+        print './names/' + os.path.normcase(file)
         with open('./names/' + os.path.normcase(file)) as fr:
             for url in fr:
                 img_url_list.append(url.strip())
@@ -94,6 +113,28 @@ def save_img_url_main(step=100, number_of_threads=4, begin=800):
     pool.join()
 
 
+def save_all_img_main(step=25, number_of_threads=4, begin=0):
+    """
+    并行保存所有图片
+    :param step: 每个线程每次循环保存多少人的图片
+    :param number_of_threads: 开启线程数
+    :param begin: 从list的第几个元素开始抓取
+    """
+    keyword_list = []
+    with open('names.txt') as fr:
+        for keyword in fr:
+            keyword_list.append(keyword.strip())
+    end = len(keyword_list)
+    pool = ThreadPool(number_of_threads)
+    func = lambda x: save_all_img(x, x + step)
+    for i in xrange(begin, end, step * number_of_threads):
+        pool.map(func, xrange(i, i + step * number_of_threads, step))
+    pool.close()
+    pool.join()
+
+
 if __name__ == '__main__':
-    save_img_url_main(number_of_threads=1, begin=0)
+    # save_all_img()
+    save_all_img_main()
+    # save_img_url_main(number_of_threads=1, begin=0)
     # save_all_img()
