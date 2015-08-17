@@ -3,10 +3,7 @@ __author__ = 'lufo'
 
 import requests
 import json
-import random
 import os
-import sys
-import chardet
 import subprocess
 from multiprocessing.dummy import Pool as ThreadPool
 
@@ -18,7 +15,7 @@ def face_detection(img_path):
     """
     path = '/Users/lufo/Downloads/darknet/'
     os.chdir(path)
-    a = subprocess.check_output('./darknet detection test ./yolo_test_1.cfg ./yolo_test_1_39000.weights a.png',
+    a = subprocess.check_output('./darknet detection test ./yolo_test_1.cfg ./yolo_test_1_39000.weights ' + img_path,
                                 shell=True)
     if 'aeroplane' in a:
         return True
@@ -74,7 +71,7 @@ def save_img_url(keyword_list, number_of_img=2000, path='./names/'):
 def save_img(img_url_list, path):
     for i, img_url in enumerate(img_url_list):
         img_path = path + str(i) + '.jpg'
-        print img_path
+        # print img_path
         with open(img_path, 'wb') as fw:
             try:
                 fw.write(requests.get(img_url, timeout=5, allow_redirects=False).content)
@@ -133,8 +130,47 @@ def save_all_img_main(step=25, number_of_threads=4, begin=0):
     pool.join()
 
 
+def delete_img_without_face(begin=0, end=200000):
+    """
+    删除没有人脸的图片
+    """
+    file_list = []
+    with open('names.txt') as fr:
+        for keyword in fr:
+            file_list.append((keyword.strip() + '.txt'))
+    for file in file_list[begin:end]:
+        path = '/Users/lufo/PycharmProjects/images/names/' + file.split('.txt')[0] + '/'
+        # print path
+        path_list = []
+        for dir_info in os.walk(path):
+            for filename in dir_info[2]:
+                if '.jpg' in filename:
+                    path_list.append(os.path.join(dir_info[0], filename))
+        for img_path in path_list:
+            print img_path
+            if not face_detection(img_path):
+                os.remove(img_path)
+
+
+def delete_img_without_face_main(step=25, number_of_threads=8, begin=0):
+    """
+    并行删除没有人脸的图片
+    """
+    keyword_list = []
+    with open('names.txt') as fr:
+        for keyword in fr:
+            keyword_list.append(keyword.strip())
+    end = len(keyword_list)
+    pool = ThreadPool(number_of_threads)
+    func = lambda x: delete_img_without_face(x, x + step)
+    for i in xrange(begin, end, step * number_of_threads):
+        pool.map(func, xrange(i, i + step * number_of_threads, step))
+    pool.close()
+    pool.join()
+
+
 if __name__ == '__main__':
     # save_all_img()
-    save_all_img_main()
+    delete_img_without_face_main()
     # save_img_url_main(number_of_threads=1, begin=0)
     # save_all_img()
