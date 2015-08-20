@@ -38,7 +38,8 @@ def uniqify(seq, idfun=None):
     return result
 
 
-def save_img_url(keyword_list, number_of_img=2000, path='./names/'):
+def save_img_url(keyword_list, path='./names/'):
+    number_of_img = 2000
     for keyword in keyword_list:
         print keyword
         pn = number_of_img / 60 + 1
@@ -64,6 +65,7 @@ def save_img_url(keyword_list, number_of_img=2000, path='./names/'):
         if not os.path.isdir(path):
             os.mkdir(path)
         with open(path + keyword + '.txt', 'w') as fw:
+            # print len(url_list)
             for url in uniqify(url_list):
                 fw.write(url + '\n')
 
@@ -171,6 +173,6 @@ def delete_img_without_face_main(step=25, number_of_threads=8, begin=0):
 
 if __name__ == '__main__':
     # save_all_img()
-    delete_img_without_face_main()
+    # delete_img_without_face_main()
     # save_img_url_main(number_of_threads=1, begin=0)
-    # save_all_img()
+    save_all_img_main(number_of_threads=4, begin=185000)
