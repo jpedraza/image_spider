@@ -173,6 +173,6 @@ def delete_img_without_face_main(step=25, number_of_threads=8, begin=0):
 
 if __name__ == '__main__':
     # save_all_img()
-    # delete_img_without_face_main()
+    # delete_img_without_face_main(step=1, number_of_threads=7)
     # save_img_url_main(number_of_threads=1, begin=0)
-    save_all_img_main(number_of_threads=4, begin=185000)
+    save_all_img_main(number_of_threads=4, begin=0)
