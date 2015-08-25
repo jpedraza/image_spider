@@ -2,28 +2,29 @@
 __author__ = 'lufo'
 
 import os
+import requests
+from bs4 import BeautifulSoup
 
 
-def get_file_num(path):
-    file_num = []  # 第i个元素为第i个文件夹下面的文件个数
+def get_dir_info(path):
+    """
+    获取文件夹每个子文件夹中文件数
+    :param path: 文件夹路径
+    :return: list，每个元素为子文件夹文件数
+    """
+    file_num_list = []
     for i, dir_info in enumerate(os.walk(path)):
-        if len(dir_info[0].split('/')) > 3:  # dir_info第一个元素为根目录的信息
-            file_num.append(len(dir_info[2]))
-            if len(dir_info[2]) > 15:
-                print dir_info[0]
-    return file_num
+        if i > 0:
+            if len(dir_info[2])>10:
+                file_num_list.append(len(dir_info[2]))
+    return file_num_list
 
 
 def main():
-    path = './sheying8'
-    file_num = get_file_num(path)
-    total_file = len(file_num)
-    for num in set(file_num):
-        temp = 0.0
-        for i in file_num:
-            if i == num:
-                temp += 1
-        print num, temp / total_file
+    file_num_list=get_dir_info('/Users/lufo/Downloads/renren')
+    with open('count.txt','w') as fw:
+        for num in file_num_list:
+            fw.write(str(num)+'\n')
 
 
 if __name__ == '__main__':
