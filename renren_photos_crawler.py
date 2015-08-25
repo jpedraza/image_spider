@@ -5,8 +5,10 @@ import os
 import re
 import ConfigParser
 import requests
+import subprocess
 from bs4 import BeautifulSoup
 from lxml import html
+from multiprocessing.dummy import Pool as ThreadPool
 
 session = None
 
@@ -72,7 +74,11 @@ def get_albums(url):
     if session == None:
         create_session()
     s = session
-    parsed_body = html.fromstring(s.get(url).content)
+    try:
+        parsed_body = html.fromstring(s.get(url, timeout=5).content)
+    except Exception, e:
+        print e
+        return {}
     js = parsed_body.xpath('//script/text()')
     js = map(lambda x: x.encode('utf-8'), js)
 
@@ -106,17 +112,23 @@ def get_imgs(album_url_dict):
 
     for key, val in album_url_dict.iteritems():
         album_url = val['album_url']
-        response = s.get(album_url)
-        parsed_body = html.fromstring(response.text)
-        js = parsed_body.xpath('//script/text()')
-        text = js[3].encode('utf-8')
-        image_list = re.findall(r'"url":"(.*?)"', text)
-        img_dict[key] = image_list
-
+        try:
+            response = s.get(album_url, timeout=5)
+            parsed_body = html.fromstring(response.content)
+            js = parsed_body.xpath('//script/text()')
+            text = js[3].encode('utf-8')
+            image_list = re.findall(r'"url":"(.*?)"', text)
+            img_dict[key] = image_list
+        except Exception, e:
+            print e
     return img_dict
 
 
 def download_img(img_dict, start_dir):
+    global session
+    if session == None:
+        create_session()
+    s = session
     for album_id, image_list in img_dict.iteritems():
 
         if not os.path.exists(start_dir):
@@ -124,9 +136,12 @@ def download_img(img_dict, start_dir):
 
         image_list = map(lambda x: x.replace('\\', ''), image_list)
         for url in image_list:
-            response = requests.get(url)
-            with open(start_dir + '/' + url.split('/')[-1], 'wb') as f:
-                f.write(response.content)
+            try:
+                response = s.get(url, timeout=5)
+                with open(start_dir + '/' + url.split('/')[-1], 'wb') as f:
+                    f.write(response.content)
+            except Exception, e:
+                print e
 
 
 def get_uid_list(uid):
@@ -141,18 +156,34 @@ def get_uid_list(uid):
     friends_per_page = 20
     while page_num <= total_pages:
         url = "http://friend.renren.com/GetFriendList.do?curpage=" + str(page_num) + "&id=" + str(uid)
-        soup = BeautifulSoup(s.get(url).content)
-        if page_num == 0:
-            count = soup.find('span', class_='count').string
-            total_pages = int(count) / friends_per_page
-        friends = soup.find_all('p', class_='avatar')
-        for friend in friends:
-            uid_list.append(friend.find('a')['href'].split('id=')[-1].strip())
-        page_num += 1
+        try:
+            soup = BeautifulSoup(s.get(url).content)
+            if page_num == 0:
+                count = soup.find('span', class_='count').string
+                total_pages = int(count) / friends_per_page
+            friends = soup.find_all('p', class_='avatar')
+            for friend in friends:
+                uid_list.append(friend.find('a')['href'].split('id=')[-1].strip())
+            page_num += 1
+        except Exception, e:
+            print e
     with open('uid_list.txt', 'a') as fw:
         for uid in uid_list:
             fw.write(uid + '\n')
     return uid_list
+
+
+def uniqify():
+    """
+    去除uid_list.txt中重复的并保存为'uid=uid'的形式
+    """
+    uid_set = set([])
+    with open('uid_list.txt', 'r') as fr:
+        for item in fr:
+            uid_set.add(item.strip())
+    with open('uid_list.txt', 'w') as fw:
+        for item in uid_set:
+            fw.write(item + '=' + item + '\n')
 
 
 def get_uid_list_main(uid, layers=5):
@@ -171,24 +202,40 @@ def get_uid_list_main(uid, layers=5):
     return uid_list
 
 
-def get_img():
+def get_img(url_dict):
+    start_dir = '/Users/lufo/PycharmProjects/images/renren'
+    for rid, url in url_dict.iteritems():
+        name = rid
+        print name
+        # 为每个人创建一个单独的文件夹存储相册
+        dir = os.path.join(start_dir, name)
+        # print dir
+        album_url_dict = get_albums(url)
+        img_dict = get_imgs(album_url_dict)
+        download_img(img_dict, dir)
+
+
+def get_img_parallel(step=25, number_of_threads=4, begin=0):
+    """
+    并行抓取图片
+    """
     config = get_config()
     # 相册首地址
     url_dict = get_url(config)
-
-    for rid, url in url_dict.iteritems():
-        name = config.get('person', rid)
-        print name
-        # 为每个人创建一个单独的文件夹存储相册
-        start_dir = os.path.join(config.get('dir', 'start_dir'), name)
-        album_url_dict = get_albums(url)
-        img_dict = get_imgs(album_url_dict)
-        download_img(img_dict, start_dir)
+    dict_slice = lambda adict, start, end: dict((k, adict[k]) for k in adict.keys()[start:end])  # 对dict切片
+    pool = ThreadPool(number_of_threads)
+    end = 1000000
+    for i in xrange(begin, end, step * number_of_threads):
+        pool.map(get_img, [dict_slice(url_dict, i + j * step, i + (j + 1) * step) for j in xrange(number_of_threads)])
+    pool.close()
+    pool.join()
 
 
 def main():
-    uid_list = get_uid_list_main(469144378, 3)
-    print uid_list
+    # uid_list = get_uid_list_main(469144378, 3)
+    # uniqify()
+    # get_img()
+    get_img_parallel()
 
 
 if __name__ == '__main__':
