@@ -20,8 +20,23 @@ def get_dir_info(path):
     return file_num_list
 
 
+def get_lfw_mean():
+    """
+    返回lfw关键点的均值
+    """
+    file_path = '/Users/lufo/Downloads/LFW(Xing)/landmark68.txt'
+    point_list = []
+    with open(file_path) as fr:
+        for line in fr:
+            point_list.append(map(float, line.strip().split()))
+    mean_point = map(lambda x: x / len(point_list),
+                     reduce(lambda x, y: [x[i] + y[i] for i in xrange(len(x))], point_list))
+    return mean_point
+
+
 def main():
-    get_dir_info('/Users/lufo/Downloads/renren')
+    # get_dir_info('/Users/lufo/Downloads/renren')
+    print get_lfw_mean()
 
 
 if __name__ == '__main__':

@@ -5,19 +5,30 @@ import os
 import re
 import ConfigParser
 import requests
-import subprocess
 from bs4 import BeautifulSoup
 from lxml import html
 from multiprocessing.dummy import Pool as ThreadPool
 
 session = None
+login_data_list = [{'email': 'lufo816@gmail.com', 'password': 'lxb816qq94'},
+                   {'email': 'l5623014872', 'password': '123456789'},
+                   {'email': '2693107435@qq.com', 'password': 'fy123456'},
+                   {'email': 'swulixi@sina.com', 'password': '12345678'},
+                   {'email': '250520506@qq.com ', 'password': 'cigityz'},
+                   {'email': '15736028958 ', 'password': 'l19898624'},
+                   {'email': 'long61@qq.com ', 'password': 'qwe!@#123'},
+                   {'email': 'mmx110@yeah.net', 'password': '19900528'},
+                   {'email': '1953097503@qq.com', 'password': '123456'},
+                   {'email': '1127308854@qq.com', 'password': 'cigitmedia'},
+                   {'email': '1127308854@qq.com', 'password': 'cigitmedia'},
+                   {'email': 'agnfff@sina.com', 'password': 'cg12345678'}]
 
 
 def create_session():
-    global session
+    global session, login_data_list
     headers = get_headers(get_config())
     s = requests.session()
-    login_data = {'email': 'lufo816@gmail.com', 'password': 'lxb816qq94'}
+    login_data = login_data_list[0]
     try:
         s.post('http://www.renren.com/PLogin.do', data=login_data, headers=headers)
     except Exception, e:
@@ -34,16 +45,12 @@ def get_config():
 
 
 # 获取每个人得相册首地址
-def get_url(config):
-    person_dict = {}
-
-    # 人人相册url前缀
-    url_prefix = 'http://photo.renren.com/photo/'
+def get_rid(config):
+    person_list = []
     rid_list = config.options('person')
     for rid in rid_list:
-        person_dict[rid] = url_prefix + rid.strip() + '/albumlist/v7'
-
-    return person_dict
+        person_list.append(rid.strip())
+    return person_list
 
 
 # 组装HTTP请求头
@@ -202,11 +209,12 @@ def get_uid_list_main(uid, layers=5):
     return uid_list
 
 
-def get_img(url_dict):
+def get_renren_img(rid_list):
     start_dir = '/Users/lufo/PycharmProjects/images/renren'
-    for rid, url in url_dict.iteritems():
+    for rid in rid_list:
         name = rid
         print name
+        url = 'http://photo.renren.com/photo/' + rid + '/albumlist/v7'
         # 为每个人创建一个单独的文件夹存储相册
         dir = os.path.join(start_dir, name)
         # print dir
@@ -221,12 +229,11 @@ def get_img_parallel(step=25, number_of_threads=4, begin=0):
     """
     config = get_config()
     # 相册首地址
-    url_dict = get_url(config)
-    dict_slice = lambda adict, start, end: dict((k, adict[k]) for k in adict.keys()[start:end])  # 对dict切片
+    rid_list = get_rid(config)
     pool = ThreadPool(number_of_threads)
     end = 1000000
     for i in xrange(begin, end, step * number_of_threads):
-        pool.map(get_img, [dict_slice(url_dict, i + j * step, i + (j + 1) * step) for j in xrange(number_of_threads)])
+        pool.map(get_renren_img, [rid_list[i + j * step: i + (j + 1) * step] for j in xrange(number_of_threads)])
     pool.close()
     pool.join()
 
@@ -235,7 +242,7 @@ def main():
     # uid_list = get_uid_list_main(469144378, 3)
     # uniqify()
     # get_img()
-    get_img_parallel()
+    get_img_parallel(begin=20)
 
 
 if __name__ == '__main__':
