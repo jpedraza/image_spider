@@ -10,7 +10,7 @@ from lxml import html
 from multiprocessing.dummy import Pool as ThreadPool
 
 session = None
-start_dir = '/Users/lufo/PycharmProjects/images/renren'
+start_dir = '/home/liuxuebo/image_spider/renren'
 login_data_list = [{'email': 'lufo816@gmail.com', 'password': 'lxb816qq94'},
                    {'email': '2693107435@qq.com', 'password': 'fy123456'},
                    {'email': 'swulixi@sina.com', 'password': '12345678'},
@@ -91,7 +91,11 @@ def get_albums(url):
 
     # 相册代码所在的js段
     album_js = js[3]
-    album_raw = re.findall(r"'albumList':\s*(\[.*?\]),", album_js)[0]
+    try:
+        album_raw = re.findall(r"'albumList':\s*(\[.*?\]),", album_js)[0]
+    except Exception, e:
+        print e
+        album_raw = '[]'
     album_list = eval(album_raw)
 
     album_url_dict = {}
@@ -171,9 +175,9 @@ def get_uid_list(uid):
             friends = soup.find_all('p', class_='avatar')
             for friend in friends:
                 uid_list.append(friend.find('a')['href'].split('id=')[-1].strip())
-            page_num += 1
         except Exception, e:
             print e
+        page_num += 1
     with open('uid_list.txt', 'a') as fw:
         for uid in uid_list:
             fw.write(uid + '\n')
