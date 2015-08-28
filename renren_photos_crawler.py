@@ -247,7 +247,7 @@ def main():
     for dir in os.walk(start_dir):
         num_of_dir += 1
     print num_of_dir
-    get_img_parallel(step=25, number_of_threads=4, begin=0 + num_of_dir, end=50000)
+    get_img_parallel(step=25, number_of_threads=4, begin=0 + max(0, num_of_dir), end=50000)
 
 
 if __name__ == '__main__':
