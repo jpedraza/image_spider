@@ -10,8 +10,8 @@ from lxml import html
 from multiprocessing.dummy import Pool as ThreadPool
 
 session = None
+start_dir = '/Users/lufo/PycharmProjects/images/renren'
 login_data_list = [{'email': 'lufo816@gmail.com', 'password': 'lxb816qq94'},
-                   {'email': 'l5623014872', 'password': '123456789'},
                    {'email': '2693107435@qq.com', 'password': 'fy123456'},
                    {'email': 'swulixi@sina.com', 'password': '12345678'},
                    {'email': '250520506@qq.com ', 'password': 'cigityz'},
@@ -28,7 +28,7 @@ def create_session():
     global session, login_data_list
     headers = get_headers(get_config())
     s = requests.session()
-    login_data = login_data_list[0]
+    login_data = login_data_list[2]
     try:
         s.post('http://www.renren.com/PLogin.do', data=login_data, headers=headers)
     except Exception, e:
@@ -210,7 +210,7 @@ def get_uid_list_main(uid, layers=5):
 
 
 def get_renren_img(rid_list):
-    start_dir = '/Users/lufo/PycharmProjects/images/renren'
+    global start_dir
     for rid in rid_list:
         name = rid
         print name
@@ -223,15 +223,15 @@ def get_renren_img(rid_list):
         download_img(img_dict, dir)
 
 
-def get_img_parallel(step=25, number_of_threads=4, begin=0):
+def get_img_parallel(step, number_of_threads, begin, end):
     """
     并行抓取图片
     """
     config = get_config()
     # 相册首地址
     rid_list = get_rid(config)
+    # get_renren_img(rid_list[2740:])
     pool = ThreadPool(number_of_threads)
-    end = 1000000
     for i in xrange(begin, end, step * number_of_threads):
         pool.map(get_renren_img, [rid_list[i + j * step: i + (j + 1) * step] for j in xrange(number_of_threads)])
     pool.close()
@@ -242,7 +242,12 @@ def main():
     # uid_list = get_uid_list_main(469144378, 3)
     # uniqify()
     # get_img()
-    get_img_parallel(begin=20)
+    global start_dir
+    num_of_dir = -1
+    for dir in os.walk(start_dir):
+        num_of_dir += 1
+    print num_of_dir
+    get_img_parallel(step=25, number_of_threads=4, begin=0 + num_of_dir, end=50000)
 
 
 if __name__ == '__main__':
