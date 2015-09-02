@@ -5,6 +5,7 @@ import os
 import re
 import ConfigParser
 import requests
+import time
 from bs4 import BeautifulSoup
 from lxml import html
 from multiprocessing.dummy import Pool as ThreadPool
@@ -20,7 +21,6 @@ login_data_list = [{'email': 'lufo816@gmail.com', 'password': 'lxb816qq94'},
                    {'email': 'mmx110@yeah.net', 'password': '19900528'},
                    {'email': '1953097503@qq.com', 'password': '123456'},
                    {'email': '1127308854@qq.com', 'password': 'cigitmedia'},
-                   {'email': '1127308854@qq.com', 'password': 'cigitmedia'},
                    {'email': 'agnfff@sina.com', 'password': 'cg12345678'}]
 
 
@@ -28,7 +28,7 @@ def create_session():
     global session, login_data_list
     headers = get_headers(get_config())
     s = requests.session()
-    login_data = login_data_list[2]
+    login_data = login_data_list[6]
     try:
         s.post('http://www.renren.com/PLogin.do', data=login_data, headers=headers)
     except Exception, e:
@@ -86,6 +86,7 @@ def get_albums(url):
     except Exception, e:
         print e
         return {}
+    time.sleep(0.1)
     js = parsed_body.xpath('//script/text()')
     js = map(lambda x: x.encode('utf-8'), js)
 
@@ -132,6 +133,7 @@ def get_imgs(album_url_dict):
             img_dict[key] = image_list
         except Exception, e:
             print e
+        time.sleep(0.1)
     return img_dict
 
 
@@ -153,6 +155,7 @@ def download_img(img_dict, start_dir):
                     f.write(response.content)
             except Exception, e:
                 print e
+            time.sleep(0.1)
 
 
 def get_uid_list(uid):
@@ -177,6 +180,7 @@ def get_uid_list(uid):
                 uid_list.append(friend.find('a')['href'].split('id=')[-1].strip())
         except Exception, e:
             print e
+        time.sleep(0.1)
         page_num += 1
     with open('uid_list.txt', 'a') as fw:
         for uid in uid_list:
@@ -243,15 +247,17 @@ def get_img_parallel(step, number_of_threads, begin, end):
 
 
 def main():
-    # uid_list = get_uid_list_main(469144378, 3)
+    # uid_list = get_uid_list_main(449803691, 5)
     # uniqify()
     # get_img()
+
     global start_dir
     num_of_dir = -1
     for dir in os.walk(start_dir):
         num_of_dir += 1
     print num_of_dir
     get_img_parallel(step=25, number_of_threads=4, begin=0 + max(0, num_of_dir), end=50000)
+
 
 
 if __name__ == '__main__':

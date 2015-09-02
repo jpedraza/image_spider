@@ -2,6 +2,8 @@
 __author__ = 'lufo'
 
 import os
+from itertools import combinations
+
 import requests
 from bs4 import BeautifulSoup
 
@@ -92,7 +94,3 @@ def main():
         for point in mean_point:
             fw.write(str(point) + ' ')
             # convent_landmark()
-
-
-if __name__ == '__main__':
-    main()
